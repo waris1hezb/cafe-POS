@@ -62,13 +62,21 @@ class MenuSpec extends AnyFlatSpec with Matchers {
     menu.updateStock("Espresso", -1) shouldBe Left(MenuInvalidStockError("Espresso"))
   }
 
-  it should "check if an item is in stock" in {
+  it should "check if an item is in stock for a given quantity" in {
     val menu = new Menu() // Fresh instance for this test
     menu.addItem(espresso) shouldBe Right(())
-    menu.isInStock("Espresso") shouldBe true
+
+    // Check if there is enough stock for a valid quantity
+    menu.isInStock("Espresso", 5) shouldBe true // 5 <= 10 (stock)
+
+    // Check if there is not enough stock for a larger quantity
+    menu.isInStock("Espresso", 15) shouldBe false // 15 > 10 (stock)
+
+    // Check if the item is out of stock
     menu.updateStock("Espresso", 0) shouldBe Right(espresso.copy(stock = 0))
-    menu.isInStock("Espresso") shouldBe false
+    menu.isInStock("Espresso", 1) shouldBe false // 1 > 0 (stock)
   }
+
 
   it should "purchase an item successfully" in {
     val menu = new Menu() // Fresh instance for this test

@@ -12,13 +12,4 @@ case class MenuInsufficientStockError(itemName: String) extends CafeError(s"Insu
 // Errors related to Orders
 case class OrderInvalidServiceChargeError(message: String) extends CafeError(message)
 case class OrderInvalidItemListError(message: String) extends CafeError(message)
-
-// Errors related to Loyalty Scheme
-case class LoyaltyCardEligibilityError(message: String) extends CafeError(message)
-case class LoyaltyCardAlreadyExistsError(message: String) extends CafeError(message)
-
-// Errors related to Happy Hour
-case class HappyHourInvalidTimeError(message: String) extends CafeError(message)
-
-// Errors related to Multi-Currency
-case class CurrencyConversionError(message: String) extends CafeError(message)
+case class OrderInvalidQuantityError(itemName: String) extends CafeError(s"Invalid quantity for item: $itemName. Quantity must be greater than 0.")

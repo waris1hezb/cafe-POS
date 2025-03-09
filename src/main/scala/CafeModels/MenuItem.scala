@@ -12,6 +12,10 @@ sealed trait MenuItem {
   def hotOrCold: HotOrCold
   def category: Category
   def description: String
+
+
+  override def toString: String = s"$name: £$price"
+
 }
 
 // Specific item case classes with type-specific features

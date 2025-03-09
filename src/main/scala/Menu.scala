@@ -72,8 +72,8 @@ class Menu {
   def listItems: List[MenuItem] = items
 
   // Check if an item is in stock
-  def isInStock(itemName: String): Boolean = {
-    items.exists(item => item.name.toString == itemName && item.stock > 0)
+  def isInStock(itemName: String, quantity: Int): Boolean = {
+    items.exists(item => item.name.toString == itemName && item.stock >= quantity)
   }
 
   // Reduce stock when an item is purchased
