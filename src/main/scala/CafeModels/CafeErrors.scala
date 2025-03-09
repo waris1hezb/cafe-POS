@@ -1,0 +1,24 @@
+package CafeModels
+
+// Base class for all custom errors
+abstract class CafeError(message: String) extends Exception(message)
+
+// Errors related to the Menu
+case class MenuItemAlreadyExistsError(itemName: String) extends CafeError(s"Item already exists: $itemName")
+case class MenuItemNotFoundError(itemName: String) extends CafeError(s"Item not found: $itemName")
+case class MenuInvalidStockError(itemName: String) extends CafeError(s"Invalid stock value for item: $itemName. Stock cannot be negative.")
+case class MenuInsufficientStockError(itemName: String) extends CafeError(s"Insufficient stock for item: $itemName")
+
+// Errors related to Orders
+case class OrderInvalidServiceChargeError(message: String) extends CafeError(message)
+case class OrderInvalidItemListError(message: String) extends CafeError(message)
+
+// Errors related to Loyalty Scheme
+case class LoyaltyCardEligibilityError(message: String) extends CafeError(message)
+case class LoyaltyCardAlreadyExistsError(message: String) extends CafeError(message)
+
+// Errors related to Happy Hour
+case class HappyHourInvalidTimeError(message: String) extends CafeError(message)
+
+// Errors related to Multi-Currency
+case class CurrencyConversionError(message: String) extends CafeError(message)

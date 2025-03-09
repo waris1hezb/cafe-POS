@@ -1,44 +1,45 @@
-import CafeModels._ // Import all models from the CafeModels package
-
+import CafeModels._ // Import all models and custom errors from the CafeModels package
 
 // Main Menu class to manage items and stock
 class Menu {
   private var items: List[MenuItem] = List()
 
-
   // Add an item to the menu
-  def addItem(item: MenuItem): Either[String, Unit] = {
+  def addItem(item: MenuItem): Either[CafeError, Unit] = {
     // Check if an item with the same name already exists in the list
     if (items.exists(_.name.toString == item.name.toString)) {
-      // If the item exists, return an error message using Left
-      Left(s"Item already exists: ${item.name}")
+      // If the item exists, return an error
+      Left(MenuItemAlreadyExistsError(item.name.toString))
     } else {
-      // If the item doesn't exist, add it to the list and return success using Right
-      items = item :: items // Add the new item to the beginning of the list
-      Right(()) // Return a success value (Unit) wrapped in Right
+      // If the item doesn't exist, add it to the list and return success
+      items = item :: items
+      Right(())
     }
   }
 
   // Remove an item from the menu by name
-  def removeItem(itemName: String): Either[String, Unit] = {
+  def removeItem(itemName: String): Either[CafeError, Unit] = {
     // Check if an item with the given name exists in the list
     if (items.exists(_.name.toString == itemName)) {
       // If the item exists, filter it out of the list and return success
-      items = items.filter(_.name.toString != itemName) // Keep only items that don't match the name
-      Right(()) // Return a success value (Unit) wrapped in Right
+      items = items.filter(_.name.toString != itemName)
+      Right(())
     } else {
-      // If the item doesn't exist, return an error message using Left
-      Left(s"Item not found: $itemName")
+      // If the item doesn't exist, return an error
+      Left(MenuItemNotFoundError(itemName))
     }
   }
 
   // Get an item by name
-  def getItem(itemName: String): Option[MenuItem] = {
-    items.find(_.name.toString == itemName)
+  def getItem(itemName: String): Either[CafeError, MenuItem] = {
+    items.find(_.name.toString == itemName) match {
+      case Some(item) => Right(item)
+      case None => Left(MenuItemNotFoundError(itemName))
+    }
   }
 
-  // Update the stock of an item using Either
-  def updateStock(itemName: String, newStock: Int): Either[String, MenuItem] = {
+  // Update the stock of an item
+  def updateStock(itemName: String, newStock: Int): Either[CafeError, MenuItem] = {
     // Find the item in the list by name
     items.find(_.name.toString == itemName) match {
       case Some(item) =>
@@ -55,15 +56,15 @@ class Menu {
           }
           // Update the list by replacing the old item with the updated item
           items = items.map(i => if (i.name.toString == itemName) updatedItem else i)
-          // Return the updated item wrapped in Right
+          // Return the updated item
           Right(updatedItem)
         } else {
-          // If the stock value is negative, return an error message using Left
-          Left("Invalid stock value: Stock cannot be negative.")
+          // If the stock value is negative, return an error
+          Left(MenuInvalidStockError(itemName))
         }
       case None =>
-        // If the item is not found, return an error message using Left
-        Left(s"Item not found: $itemName")
+        // If the item is not found, return an error
+        Left(MenuItemNotFoundError(itemName))
     }
   }
 
@@ -76,15 +77,15 @@ class Menu {
   }
 
   // Reduce stock when an item is purchased
-  def purchaseItem(itemName: String, quantity: Int): Boolean = {
+  def purchaseItem(itemName: String, quantity: Int): Either[CafeError, Boolean] = {
     getItem(itemName) match {
-      case Some(item) if item.stock >= quantity =>
-        updateStock(itemName, item.stock - quantity)
-        true
-      case _ =>
-        false
+      case Right(item) if item.stock >= quantity =>
+        updateStock(itemName, item.stock - quantity).map(_ => true) // Update stock and return success
+      case Right(_) =>
+        Left(MenuInsufficientStockError(itemName)) // Error for insufficient stock
+      case Left(error) =>
+        Left(error) // Error for item not found
     }
   }
 }
-
 
