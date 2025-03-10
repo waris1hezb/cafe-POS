@@ -83,7 +83,7 @@ class Bill {
          |Subtotal: £${subtotal.setScale(2, RoundingMode.HALF_UP)}
          |Service Charge: £${serviceCharge.setScale(2, RoundingMode.HALF_UP)}
          |Total: £${total.setScale(2, RoundingMode.HALF_UP)}
-         |""".stripMargin.trim       //Use .trim to remove leading/trailing whitespace = resolved testing issues
+         |""".stripMargin.trim       //Use .trim to remove leading/trailing whitespace = resolved my testing issues
     }
   }
 }
